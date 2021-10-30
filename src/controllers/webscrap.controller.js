@@ -52,14 +52,20 @@ const test = async(req, res) => {
 
 }
 
-async function obtencionID() {
+async function obtencionID() { // funcion que permite obtener el id autoincrementable
     const idCount = await pool.query('Select id_indicadores from indicadores order by id_indicadores desc;')
-    let idPrimary = idCount.rows[0];
-    console.log("este es el id:::", idPrimary.id_indicadores);
-    let aux = idPrimary.id_indicadores;
-    return aux;
-};
+    if (idCount.rows[0] != null) { // si no se encuentra vacio, retorna el ultimo id
+        let idPrimary = idCount.rows[0]; // al ordenarse de mayor a menor, en la primera posicion esta el ultimo
+        console.log("este es el id:::", idPrimary.id_indicadores);
+        let aux = idPrimary.id_indicadores;
 
+        return aux // retorna el valor del id
+    } else { // si esta vacio, asigna a aux 0 para inicializarlo
+        let aux = 0;
+        return aux; // retorna id=0 que posteriormente en insert scraping se le sumara 1 a este valor
+    }
+
+};
 
 async function insertRegistros(data) { //funcion utilizada para insertar estaciones en la base de datos
     const response = await pool.query('select count(*) from estaciones;');
@@ -83,9 +89,9 @@ const insertScraping = async(req, res, data, data2) => { // funcion utilizada pa
         if (aux == true) { // si no se realizo el registro true, por ende entra en  el if para insertar los datos
             const respuesta1 = await pool.query('insert into periodo (id_periodo) values ($1)', [fechaActual]); //inserta la fecha en la tabla periodo
             for (let i = 0; i < data.length; i++) { // recore el arreglo con la informacion
-                let aux = await obtencionID();
+                let aux = await obtencionID(); //Funcion que permite guardar el ultimo id de la tabla de indicadores
                 let aux1 = aux+1; 
-                console.log("ESTE ES EL AUXXXXX ------> ", aux1);
+                console.log("Este es el nuevo id: ", aux1);
                 const respuesta2 = await pool.query('insert into indicadores  (id_indicadores,codigo_esta, idperiodo, precipitaciones, temp_min, temp_max) values ($1, $2, $3, $4, $5, $6)', [aux1,data2[i], fechaActual, data[i].precipitacion, data[i].temp_min, data[i].temp_max]); // inserta los datos en la tabla de hecho de indicadores
             }
             console.log("Insercion exitosa");
