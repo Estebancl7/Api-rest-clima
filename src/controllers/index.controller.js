@@ -62,17 +62,17 @@ const getEstimate = async(req, res) => { // funcion utilizada para realizar una 
     const lat = req.params.latitud;
     const lon = req.params.longitud;
     if (parameter == "precipitaciones") {
-        const resultado = await pool.query("SELECT avg(precipitaciones) as agua_caida_estimada FROM indicadores JOIN estaciones on indicadores.codigo_esta = estaciones.codigo WHERE  estaciones.latitud = $1 AND estaciones.longitud = $2;", [lat, lon]);
+        const resultado = await pool.query("SELECT precipitaciones as agua_caida_estimada , idperiodo as fecha FROM indicadores  JOIN estaciones on indicadores.codigo_esta = estaciones.codigo WHERE  estaciones.latitud = $1 AND estaciones.longitud = $2;", [lat, lon]);
         res.status(200).json(resultado.rows);
 
     } else {
         if (parameter == "temp_max") {
-            const resultado = await pool.query("SELECT avg(temp_max) as temperatura_maxima_estimada FROM indicadores JOIN estaciones on indicadores.codigo_esta = estaciones.codigo WHERE  estaciones.latitud = $1 AND estaciones.longitud = $2;", [lat, lon]);
+            const resultado = await pool.query("SELECT temp_max as temperatura_maxima_estimada , idperiodo as fecha FROM indicadores  JOIN estaciones on indicadores.codigo_esta = estaciones.codigo WHERE  estaciones.latitud = $1 AND estaciones.longitud = $2;", [lat, lon]);
             res.status(200).json(resultado.rows);
 
         } else {
             if (parameter == "temp_min") {
-                const resultado = await pool.query("SELECT avg(temp_min) as temperatura_minima_estimada FROM indicadores JOIN estaciones on indicadores.codigo_esta = estaciones.codigo WHERE  estaciones.latitud = $1 AND estaciones.longitud = $2;", [lat, lon]);
+                const resultado = await pool.query("SELECT temp_min as temperatura_minima_estimada , idperiodo as fecha FROM indicadores  JOIN estaciones on indicadores.codigo_esta = estaciones.codigo WHERE  estaciones.latitud = $1 AND estaciones.longitud = $2;", [lat, lon]);
                 res.status(200).json(resultado.rows);
 
             } else {

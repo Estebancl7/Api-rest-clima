@@ -153,9 +153,9 @@ router.post('/grupo-b/search', authenticateToken, searchWithParameters);
  *  get:
  *    security:
  *      - bearerAuth: []
- *    summary: estimar un parametro en una fecha concreta
+ *    summary: muestra el parametro estimado de una estacion en la fecha actual
  *    tags: [clima]
- *    description: estimar un parametro mediante una fecha concreta mediante datos historicos almacenados en la base de datos
+ *    description: muestra los datos estimados para la fecha actual, obtenidos del boletin diario
  *    parameters:
  *      - in: path
  *        name: parameter
