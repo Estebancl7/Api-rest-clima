@@ -80,6 +80,5 @@ app.use(cookieParser());
 
 //Routes
 app.use(require('./routes/index'));
-app.use(require('./routes/webscrap'));
 app.use('/grupo-b/users', usersRouter);
 app.use('/grupo-b/auth', authRouter);

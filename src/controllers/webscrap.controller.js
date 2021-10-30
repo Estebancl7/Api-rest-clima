@@ -52,7 +52,13 @@ const test = async(req, res) => {
 
 }
 
-
+async function obtencionID() {
+    const idCount = await pool.query('Select id_indicadores from indicadores order by id_indicadores desc;')
+    let idPrimary = idCount.rows[0];
+    console.log("este es el id:::", idPrimary.id_indicadores);
+    let aux = idPrimary.id_indicadores;
+    return aux;
+};
 
 
 async function insertRegistros(data) { //funcion utilizada para insertar estaciones en la base de datos
@@ -77,11 +83,15 @@ const insertScraping = async(req, res, data, data2) => { // funcion utilizada pa
         if (aux == true) { // si no se realizo el registro true, por ende entra en  el if para insertar los datos
             const respuesta1 = await pool.query('insert into periodo (id_periodo) values ($1)', [fechaActual]); //inserta la fecha en la tabla periodo
             for (let i = 0; i < data.length; i++) { // recore el arreglo con la informacion
-                const respuesta2 = await pool.query('insert into indicadores  (codigo_esta, idperiodo, precipitaciones, temp_min, temp_max) values ($1, $2, $3, $4, $5)', [data2[i], fechaActual, data[i].precipitacion, data[i].temp_min, data[i].temp_max]); // inserta los datos en la tabla de hecho de indicadores
+                let aux = await obtencionID();
+                let aux1 = aux+1; 
+                console.log("ESTE ES EL AUXXXXX ------> ", aux1);
+                const respuesta2 = await pool.query('insert into indicadores  (id_indicadores,codigo_esta, idperiodo, precipitaciones, temp_min, temp_max) values ($1, $2, $3, $4, $5, $6)', [aux1,data2[i], fechaActual, data[i].precipitacion, data[i].temp_min, data[i].temp_max]); // inserta los datos en la tabla de hecho de indicadores
             }
-            return res.status(200).json({ message: 'Insercion exitosa' });
+            console.log("Insercion exitosa");
         } else { // en el caso de ser false, muestra que ya se realizo el registro, por ende no realiza la insercion
-            return res.status(204).json({ message: 'Ya se realizo el registro diario' });
+            console.log("Ya se realizo el registro diario!");
+            
         }
 
     } catch (error) {
@@ -107,7 +117,7 @@ async function vericationDate(fecha) { //funcion que verifica que la fecha(regis
     if (respuesta.rows[0] == null) { //si respuesta esta vacio es por que no se ha hecho el registro, por ende retorna un true
         return true;
     } else {
-        console.log("ya se realizo el registro diario"); // si encuentra la fecha y por ende respuesta no esta vacio, retorna un false
+        console.log("Ya se realizo el registro diario de fechas!"); // si encuentra la fecha y por ende respuesta no esta vacio, retorna un false
         return false;
     }
 
