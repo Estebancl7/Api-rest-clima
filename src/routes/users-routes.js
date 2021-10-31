@@ -43,7 +43,7 @@ const router = express.Router();
  *   
  */
 
-router.get('/', authenticateToken, async(req, res) => {
+router.get('/', authenticateToken, async(req, res) => { //funcion que muestra los usuarios ingresados en la base de datos
     try {
         const users = await pool.query('SELECT * FROM users');
         res.json({ users: users.rows });
@@ -74,7 +74,7 @@ router.get('/', authenticateToken, async(req, res) => {
  *   
  */
 
-router.post('/register', async(req, res) => {
+router.post('/register', async(req, res) => { //funcion en donde se regrista el usuario con un email y contraseña
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const newUser = await pool.query(

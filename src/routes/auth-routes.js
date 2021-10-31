@@ -53,13 +53,13 @@ const router = express.Router();
  *     description: Error interno del servidor
  */
 
-router.post('/login', async(req, res) => {
+router.post('/login', async(req, res) => { //Funcion de acceso con usuario previamente registrado
     try {
         const { email, password } = req.body;
         const users = await pool.query('SELECT * FROM users WHERE user_email = $1', [email]);
         if (users.rows.length === 0) return res.status(401).json({ error: "Email incorrecto" });
         //comprobacion de contraseña
-        const validPassword = await bcrypt.compare(password, users.rows[0].user_password);
+        const validPassword = await bcrypt.compare(password, users.rows[0].user_password); //lugar donde se compara la password ingresa con la codificada en la base de datos
         if (!validPassword) return res.status(401).json({ error: "Contraseña incorrecta" });
         //JWT
         let tokens = jwtTokens(users.rows[0]);
@@ -95,7 +95,7 @@ router.post('/login', async(req, res) => {
 router.get('/refresh_token', (req, res) => {
     try {
         const refreshToken = req.cookies.refresh_token;
-        if (refreshToken === null) return res.status(401).json({ error: 'refresh token nulo' });
+        if (refreshToken === null) return res.status(401).json({ error: 'refresh token nulo' });// if que muestra un token nulo de no haber iniciado sesion
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error, user) => {
             if (error) return res.status(403).json({ error: error.message });
             let tokens = jwtTokens(user);
@@ -127,7 +127,7 @@ router.get('/refresh_token', (req, res) => {
  *     description: Error interno del servidor
  */
 
-router.delete('/refresh_token', (req, res) => {
+router.delete('/refresh_token', (req, res) => { //funcion delete para eliminar el refresh token
     try {
         res.clearCookie('refresh_token');
         return res.status(200).json({ message: 'refresh token eliminado' })
