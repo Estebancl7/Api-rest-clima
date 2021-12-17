@@ -82,9 +82,18 @@ const getEstimate = async(req, res) => { // funcion utilizada para realizar una 
     }
 };
 
+const getEstimateDatos = async(req, res) => { // funcion utilizada para desplegar las estaciones existentes en la base de datos
+    const fechaNueva = new Date; // para obtener la fecha de hoy
+    console.log("esta es la feecha de hoyyyyy:", fechaNueva.toLocaleDateString());
+    aux = fechaNueva.toLocaleDateString();
+    const respuesta = await pool.query('SELECT C.nombre, codigo_esta, precipitaciones, temp_min, temp_max FROM indicadores A LEFT JOIN estaciones C ON C.codigo = A.codigo_esta where idperiodo =$1', [aux]); // realiza la consulta sobre las estaciones
+    res.status(200).json(respuesta.rows); // muestra los datos almacenados en la base de datos
+};
+
 module.exports = {
     getStations,
     getStationsByID,
     searchWithParameters,
-    getEstimate
+    getEstimate,
+    getEstimateDatos
 }

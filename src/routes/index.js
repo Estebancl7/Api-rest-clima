@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const router = Router();
-const { getStations, getStationsByID, searchWithParameters, getEstimate } = require('../controllers/index.controller');
+const { getStations, getStationsByID, searchWithParameters, getEstimate, getEstimateDatos } = require('../controllers/index.controller');
 
 const { authenticateToken } = require('../middleware/authorization.js');
 
@@ -85,7 +85,7 @@ const { authenticateToken } = require('../middleware/authorization.js');
  *      500:
  *        description: Error interno del servidor
  */
-router.get('/grupo-b/stations', authenticateToken, getStations);
+router.get('/grupo-b/stations', getStations);
 
 
 
@@ -116,7 +116,7 @@ router.get('/grupo-b/stations', authenticateToken, getStations);
  *      500:
  *        description: Error interno del servidor
  */
-router.get('/grupo-b/:id/stations', authenticateToken, getStationsByID);
+router.get('/grupo-b/:id/stations', getStationsByID);
 
 
 
@@ -190,5 +190,8 @@ router.post('/grupo-b/search', authenticateToken, searchWithParameters);
  *        description: Error interno del servidor
  */
 router.get('/grupo-b/:parametro/:latitud/:longitud/estimate', authenticateToken, getEstimate);
+
+router.get('/grupo-b/stimate', getEstimateDatos);
+
 
 module.exports = router;
